@@ -34,8 +34,10 @@
 /web/themes/README.txt
 /web/update.php
 
-
 # Ignore configuration files that may contain sensitive information.
+*.sql
+*.sql.gz
+
 /web/sites/*/settings*.php
 /web/sites/*/services*.yml
 /web/sites/example.settings.local.php
