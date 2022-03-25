@@ -1,0 +1,30 @@
+on: [pull_request]
+name: Tests and code
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: drupal9ci
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Install Drupal
+        run: ./vendor/bin/drush site:install --db-url=mysql://root:root@127.0.0.1/drupal --existing-config -y
+
+      - name: Execute tests
+        run: |
+          cp example.phpunit.xml phpunit.xml
+          ./vendor/bin/phpunit web/modules/custom

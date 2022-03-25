@@ -17,7 +17,6 @@
 # that core/assets/vendor and any other vendor directories within contrib or
 # custom module, theme, etc., are not ignored unless you purposely do so.
 /vendor/
-
 /web/.csslintrc
 /web/.eslintignore
 /web/.eslintrc.json
@@ -26,16 +25,18 @@
 /web/.gitignore
 /web/INSTALL.txt
 /web/README.md
-
 /web/robots.txt
 /web/web.config
+/web/modules/contrib
 /web/modules/README.txt
 /web/profiles/README.txt
 /web/themes/README.txt
 /web/update.php
 
-
 # Ignore configuration files that may contain sensitive information.
+*.sql
+*.sql.gz
+
 /web/sites/*/settings*.php
 /web/sites/*/services*.yml
 /web/sites/example.settings.local.php
@@ -62,5 +63,7 @@
 
 # Ignore SimpleTest multi-site environment.
 # simpletest
+/.phpunit.result.cache
 /.editorconfig
 /.gitattributes
+phpunit.xml
