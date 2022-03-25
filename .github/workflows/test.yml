@@ -25,4 +25,6 @@ jobs:
         run: ./vendor/bin/drush site:install --db-url=mysql://root:root@127.0.0.1/drupal9ci --existing-config -y
 
       - name: Run tests on custom modules
-        run: ./vendor/bin/phpunit web/modules/custom
+        run: |
+          cp example.phpunit.xml phpunit.xml
+          ./vendor/bin/phpunit web/modules/custom
