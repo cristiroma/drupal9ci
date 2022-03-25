@@ -31,13 +31,28 @@ You can install the website without using an existing SQL dump using the followi
 # Quality assurance
 
 
-```
-https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
-```
+## PHPCS - PHP Code Sniffer
+
+
+1. Use the PHP CS locally:
+
 
 ```bash
 ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml web/modules/custom/ web/themes/custom/
 ```
+
+2. Automatically fix coding issues
+
+```bash
+./vendor/bin/phpcbf --standard=Drupal,DrupalPractice web/modules/custom/ web/themes/custom/
+```
+
+Bibliography:
+
+- https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
+- https://www.drupal.org/docs/contributed-modules/code-review-module/php-codesniffer-command-line-usage
+- https://www.drupal.org/drupalorg/docs/drupal-ci/using-coderphpcs-in-drupalci
+
 
 
 # Testing
