@@ -2,7 +2,7 @@ on: [push, pull_request]
 name: Deploy project
 jobs:
   build:
-    name: Create release
+    name: Build release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,7 +13,7 @@ jobs:
         run: composer install --no-ansi --no-dev --no-interaction --no-progress --optimize-autoloader
 
       - name: Upload artifact
-      - uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3
         with:
           name: website
           path: |
