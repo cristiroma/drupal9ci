@@ -1,0 +1,6 @@
+name: Demo theme
+type: theme
+package: Testing
+description: Provides an example theme
+core_version_requirement: ^8.8 || ^9
+base theme: olivero

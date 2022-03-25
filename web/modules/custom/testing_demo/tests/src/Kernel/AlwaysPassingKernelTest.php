@@ -6,13 +6,15 @@ use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Sample Kernel test.
- * 
+ *
  * @group testing_demo
  */
 class AlwaysPassingKernelTest extends KernelTestBase {
 
+  /**
+   * {@inheritDoc}
+   */
   public static $modules = ['system', 'field'];
-
 
   /**
    * Always succeed.

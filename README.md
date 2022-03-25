@@ -1,3 +1,59 @@
+# Local development
+
+## Installing site from config without SQL dump
+
+You can install the website without using an existing SQL dump using the following steps:
+
+1. Create a new file `web/sites/default/settings.local.php` populated with the database connection information
+
+```php
+  $databases['default']['default'] = array (
+    'database' => 'drupal',
+    'username' => 'root',
+    'password' => 'root',
+    'prefix' => '',
+    'host' => 'localhost',
+    'port' => '',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+);
+
+```
+
+2. Install the website using Drush
+
+
+```bash
+./vendor/bin/drush site:install --existing-config -y
+```
+
+
+# Quality assurance
+
+
+## PHPCS - PHP Code Sniffer
+
+
+1. Use the PHP CS locally:
+
+
+```bash
+./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml web/modules/custom/ web/themes/custom/
+```
+
+2. Automatically fix coding issues
+
+```bash
+./vendor/bin/phpcbf --standard=Drupal,DrupalPractice web/modules/custom/ web/themes/custom/
+```
+
+Bibliography:
+
+- https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
+- https://www.drupal.org/docs/contributed-modules/code-review-module/php-codesniffer-command-line-usage
+- https://www.drupal.org/drupalorg/docs/drupal-ci/using-coderphpcs-in-drupalci
+
+
 
 # Testing
 
