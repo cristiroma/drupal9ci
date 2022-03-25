@@ -12,11 +12,14 @@ jobs:
       - name: Install dependencies
         run: composer install --no-ansi --no-dev --no-interaction --no-progress --optimize-autoloader
 
+      - name: Get commit hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_HASH
+
       - name: Compress release
-        run: tar cvf release-${{ github.ref }}.tar --exclude=.github --exclude=.git --exclude=.gitignore --exclude=.gitattributes --exclude=phpmd.xml --exclude=README.md --exclude=web/.csslintrc --exclude=web/.eslintignore --exclude=web/.eslintrc.json --exclude=web/.example.gitignore --exclude=web/.gitignore --exclude=web/.ht.router.php --exclude=web/example.gitignore --exclude=web/INSTALL.txt --exclude=web/README.md --exclude=web/update.php --exclude=web/web.config --exclude=web/modules/README.txt --exclude=web/themes/README.txt --exclude=web/sites/development.services.yml --exclude=web/sites/example.settings.local.php --exclude=web/sites/example.sites.php --exclude=web/sites/example.sites.php --exclude=web/sites/README.txt .
+        run: tar cvf release-${GITHUB_HASH}.tar --exclude=.github --exclude=.git --exclude=.gitignore --exclude=.gitattributes --exclude=phpmd.xml --exclude=README.md --exclude=web/.csslintrc --exclude=web/.eslintignore --exclude=web/.eslintrc.json --exclude=web/.example.gitignore --exclude=web/.gitignore --exclude=web/.ht.router.php --exclude=web/example.gitignore --exclude=web/INSTALL.txt --exclude=web/README.md --exclude=web/update.php --exclude=web/web.config --exclude=web/modules/README.txt --exclude=web/themes/README.txt --exclude=web/sites/development.services.yml --exclude=web/sites/example.settings.local.php --exclude=web/sites/example.sites.php --exclude=web/sites/example.sites.php --exclude=web/sites/README.txt .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: release-${{ github.ref }}.tar
-          path: ./release-${{ github.ref }}.tar
+          name: release-${GITHUB_HASH}.tar
+          path: ./release-${GITHUB_HASH}.tar
