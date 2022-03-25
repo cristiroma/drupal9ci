@@ -38,7 +38,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: release-${{ steps.sha.outputs.sha7 }}.tar.gz
-          path: ./release-${{ steps.sha.outputs.sha7 }}.tar.gz
 
       - name: test
-        run: tar zxvf release-${{ steps.sha.outputs.sha7 }}.tar.gz
+        run: ls -lsah
