@@ -1,7 +1,7 @@
 on: [push, pull_request]
 name: Tests and code
 jobs:
-  phpunit:
+  testing:
     runs-on: ubuntu-latest
     services:
       mariadb:
@@ -22,9 +22,9 @@ jobs:
         run: composer install
 
       - name: Install Drupal
-        run: ./vendor/bin/drush site:install --db-url=mysql://root:root@127.0.0.1/drupal9ci --existing-config -y
+        run: ./vendor/bin/drush site:install --db-url=mysql://root:root@127.0.0.1/drupal --existing-config -y
 
-      - name: Run tests on custom modules
+      - name: Execute tests
         run: |
           cp example.phpunit.xml phpunit.xml
           ./vendor/bin/phpunit web/modules/custom
