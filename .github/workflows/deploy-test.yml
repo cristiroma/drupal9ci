@@ -1,5 +1,8 @@
-on: [push, pull_request]
-name: Deploy project
+on:
+  push:
+    branches:
+      - 'test'
+name: Deploy project to test instance
 jobs:
   build:
     name: Build release
