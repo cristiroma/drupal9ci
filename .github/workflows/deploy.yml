@@ -58,13 +58,10 @@ jobs:
 
       - name: Deploy release to server
         run: |
-          ssh server 'mkdir -p ${PROJECT_DIR}/release-${{ steps.sha.outputs.sha7 }}'
-          scp release-${{ steps.sha.outputs.sha7 }}.tar.gz server:${PROJECT_DIR}/release-${{ steps.sha.outputs.sha7 }}/
-          ssh server 'cd ${PROJECT_DIR}/release-${{ steps.sha.outputs.sha7 }} && tar zxvf release-${{ steps.sha.outputs.sha7 }}.tar.gz && rm release-${{ steps.sha.outputs.sha7 }}.tar.gz'
-          ssh server 'cd ${PROJECT_DIR} && ln -s settings.local.php ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && ln -s files ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && rm -f live && ln -s release-${{ steps.sha.outputs.sha7 }} live'
+          ssh server 'mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}'
+          scp release-${{ steps.sha.outputs.sha7 }}.tar.gz server:${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}/
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }} && tar zxvf release-${{ steps.sha.outputs.sha7 }}.tar.gz && rm release-${{ steps.sha.outputs.sha7 }}.tar.gz'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s settings.local.php ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && ln -s files ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && rm -f live && ln -s release-${{ steps.sha.outputs.sha7 }} live'
 
       - name: Clean releases older than 90 days
-        run:  ssh server 'cd ${PROJECT_DIR} && find release-* -type d -mtime +90 -prune -exec rmdir {} \;'
-        env:
-          PROJECT_DIR: ${{ secrets.TEST_PROJECT_DIR }}
-
+        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -type d -mtime +90 -prune -exec rmdir {} \;'
