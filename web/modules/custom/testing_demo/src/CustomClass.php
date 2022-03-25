@@ -5,7 +5,7 @@
  */
 class CustomClass {
 
-
-  $a = 0;
+  /* An interesting variable. */
+  public $longVariableName = 0;
 
 }
