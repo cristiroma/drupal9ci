@@ -60,8 +60,8 @@ jobs:
         run: |
           ssh server 'mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}'
           scp release-${{ steps.sha.outputs.sha7 }}.tar.gz server:${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}/
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }} && tar zxvf release-${{ steps.sha.outputs.sha7 }}.tar.gz && rm release-${{ steps.sha.outputs.sha7 }}.tar.gz'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }} && tar zxf release-${{ steps.sha.outputs.sha7 }}.tar.gz && rm release-${{ steps.sha.outputs.sha7 }}.tar.gz'
           ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s settings.local.php ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && ln -s files ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/ && rm -f live && ln -s release-${{ steps.sha.outputs.sha7 }} live'
 
       - name: Clean releases older than 90 days
-        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -type d -mtime +90 -prune -exec rmdir {} \;'
+        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
