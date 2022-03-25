@@ -27,6 +27,19 @@ You can install the website without using an existing SQL dump using the followi
 ./vendor/bin/drush site:install --existing-config -y
 ```
 
+
+# Quality assurance
+
+
+```
+https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
+```
+
+```bash
+./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml web/modules/custom/ web/themes/custom/
+```
+
+
 # Testing
 
 ## How to see which tests to run?
