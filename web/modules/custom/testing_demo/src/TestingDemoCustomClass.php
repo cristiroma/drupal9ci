@@ -3,10 +3,12 @@
 /**
  * Sample custom class.
  */
-class CustomClass {
+class TestingDemoCustomClass {
 
   /**
    * An interesting variable.
+   *
+   * @var longVariableName
    */
   public $longVariableName = 0;
 

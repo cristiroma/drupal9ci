@@ -11,6 +11,9 @@ use Drupal\KernelTests\KernelTestBase;
  */
 class AlwaysPassingKernelTest extends KernelTestBase {
 
+  /**
+   * {@inheritDoc}
+   */
   public static $modules = ['system', 'field'];
 
   /**
