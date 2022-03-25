@@ -26,8 +26,9 @@ jobs:
           path: ./release-${{ steps.sha.outputs.sha7 }}.tar
 
   deploy:
-    name: Build release
+    name: Deploy release
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: "Compute SHA"
         id: sha
