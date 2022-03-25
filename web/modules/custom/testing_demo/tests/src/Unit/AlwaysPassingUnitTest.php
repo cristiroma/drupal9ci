@@ -6,14 +6,14 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
+ * Sample unit test.
+ * 
  * @group testing_demo
  */
-class VerboseMessengerTest extends UnitTestCase {
+class AlwaysPassingUnitTest extends UnitTestCase {
 
   /**
-   * Tests add messages.
-   *
-   * @covers ::addMessage
+   * Always succeed.
    */
   public function testTrue() {
     $this->assertTrue(TRUE);
