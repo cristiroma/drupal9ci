@@ -1,0 +1,37 @@
+on: [push, pull_request]
+name: Deploy project
+jobs:
+  build:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Install dependencies
+        run: composer install --no-ansi --no-dev --no-interaction --no-progress --optimize-autoloader
+
+      - name: Upload artifact
+      - uses: actions/upload-artifact@v3
+        with:
+          name: website
+          path: |
+            web/
+            !web/.csslintrc
+            !web/.eslintignore
+            !web/.eslintrc.json
+            !web/.example.gitignore
+            !web/.gitignore
+            !web/.ht.router.php
+            !web/INSTALL.txt
+            !web/README.md
+            !web/update.php
+            !web/web.config
+            !web/modules/README.txt
+            !web/themes/README.txt
+            !web/sites/development.services.yml
+            !web/sites/example.settings.local.php
+            !web/sites/example.sites.php
+            !web/sites/example.sites.php
+            !web/sites/README.txt
