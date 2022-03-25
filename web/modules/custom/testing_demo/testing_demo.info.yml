@@ -1,0 +1,5 @@
+type: module
+name: Testing Demo
+package: Testing
+description: Provides an example test that can be run and always passes
+core_version_requirement: ^8.8 || ^9
