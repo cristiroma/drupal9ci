@@ -9,30 +9,14 @@ jobs:
           dev: true
           artifact: false
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --ansi --strict
-
-      - name: Determine composer cache directory
-        uses: "ergebnis/.github/actions/composer/determine-cache-directory@1.4.0"
-
-      - name: Cache dependencies installed with composer
-        uses: actions/cache@v3
-        with:
-          path: "${{ env.COMPOSER_CACHE_DIR }}"
-          key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
-
-      - name: Install dependencies
-        run: composer install
-
       - name: Check - PHP MD on modules
-        run: ./vendor/bin/phpmd  web/modules/custom/ xml phpmd.xml
+        run: ./vendor/bin/phpmd  ./web/modules/custom/ xml phpmd.xml
 
       - name: Check - PHP MD on theme
-        run: ./vendor/bin/phpmd  web/themes/custom/ xml phpmd.xml
+        run: ./vendor/bin/phpmd  ./web/themes/custom/ xml phpmd.xml
 
       - name: Check - PHP Code Sniffer
-        run: ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml web/modules/custom/ web/themes/custom/
+        run: ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml ./web/modules/custom/ ./web/themes/custom/
 
   testing:
     runs-on: ubuntu-latest
