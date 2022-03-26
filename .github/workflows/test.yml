@@ -1,7 +1,8 @@
-on: [push, pull_request]
+on: [pull_request]
 name: Tests and code
 jobs:
-  qa:
+  code:
+    name: "Checking code quality"
     runs-on: ubuntu-latest
     steps:
       - uses: cristiroma/drupal-release-action@main
@@ -19,6 +20,7 @@ jobs:
         run: ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml ./web/modules/custom/ ./web/themes/custom/
 
   testing:
+    name: "Run Drupal tests"
     runs-on: ubuntu-latest
     services:
       mariadb:
