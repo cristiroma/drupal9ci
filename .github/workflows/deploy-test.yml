@@ -1,11 +1,32 @@
 on: [push, pull_request]
 name: Deploy project to test instance
 jobs:
+  build:
+    name: "Create release archive"
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      filename: ${{ steps.release.outputs.filename }}
+      base: ${{ steps.release.outputs.base }}
+      sha: ${{ steps.release.outputs.sha }}
+    steps:
+      - name: "Build artifact"
+        id: release
+        uses: cristiroma/drupal-release-action@outputs
+        with:
+          dev: false
+          artifact: true
+
   deploy:
     name: "Deploy release"
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.build.outputs.filename }}
+
       - name: "Configure SSH"
         run: |
           mkdir -p ~/.ssh/
@@ -23,21 +44,14 @@ jobs:
           SSH_KEY: ${{ secrets.TEST_SSH_KEY }}
           SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
 
-      - name: "Build artifact"
-        id: release
-        uses: cristiroma/drupal-release-action@outputs
-        with:
-          dev: false
-          artifact: false
-
       - name: "Deploy release to server"
         run: |
-          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ steps.artifact.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ steps.artifact.outputs.base }}'
-          scp ${{ steps.artifact.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ steps.artifact.outputs.base }}/
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/${{ steps.artifact.outputs.base }} && tar zxf ${{ steps.artifact.outputs.filename }} && rm ${{ steps.artifact.outputs.filename }}'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./${{ steps.artifact.outputs.base }}/web/sites/default/settings.local.php'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./${{ steps.artifact.outputs.base }}/web/sites/default/files'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s ${{ steps.artifact.outputs.base }} live'
+          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}'
+          scp ${{ needs.build.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}/
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && tar zxf ${{ needs.build.outputs.filename }} && rm ${{ needs.build.outputs.filename }}'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./${{ needs.build.outputs.base }}/web/sites/default/settings.local.php'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./${{ needs.build.outputs.base }}/web/sites/default/files'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s ${{ needs.build.outputs.base }} live'
 
       - name: "Clean releases older than 90 days"
         run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
