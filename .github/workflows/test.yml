@@ -1,12 +1,13 @@
-on: [pull_request]
+on: [push, pull_request]
 name: Tests and code
 jobs:
   qa:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: cristiroma/drupal-release-action@main
         with:
-          fetch-depth: 1
+          dev: true
+          artifact: false
 
       - name: Validate composer.json and composer.lock
         run: composer validate --ansi --strict
@@ -46,25 +47,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: cristiroma/drupal-release-action@main
         with:
-          fetch-depth: 1
-
-      - name: Validate composer.json and composer.lock
-        run: composer validate --ansi --strict
-
-      - name: Determine composer cache directory
-        uses: "ergebnis/.github/actions/composer/determine-cache-directory@1.4.0"
-
-      - name: Cache dependencies installed with composer
-        uses: actions/cache@v3
-        with:
-          path: "${{ env.COMPOSER_CACHE_DIR }}"
-          key: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
-
-      - name: Install dependencies
-        run: composer install
+          dev: true
+          artifact: false
 
       - name: Install Drupal
         run: ./vendor/bin/drush site:install --db-url=mysql://root:root@127.0.0.1/drupal --existing-config -y
