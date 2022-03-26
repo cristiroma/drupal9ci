@@ -2,47 +2,35 @@ on:
   push:
     branches:
       - 'test'
+
 name: Deploy project to test instance
 jobs:
   build:
-    name: Build release
+    name: "Create release archive"
     runs-on: ubuntu-latest
+    outputs:
+      filename: ${{ steps.release.outputs.filename }}
+      base: ${{ steps.release.outputs.base }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
-      - uses: actions/checkout@v2
+      - name: "Build artifact"
+        id: release
+        uses: cristiroma/drupal-release-action@v1.2
         with:
-          fetch-depth: 1
-
-      - name: "Compute SHA"
-        id: sha
-        run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
-
-      - name: Install dependencies
-        run: composer install --no-ansi --no-dev --no-interaction --no-progress --optimize-autoloader
-
-      - name: Compress release
-        run: tar cvfz release-${{ steps.sha.outputs.sha7 }}.tar.gz --exclude=web/.csslintrc --exclude=web/.eslintignore --exclude=web/.eslintrc.json --exclude=web/.example.gitignore --exclude=web/.gitignore --exclude=web/.ht.router.php --exclude=web/example.gitignore --exclude=web/INSTALL.txt --exclude=web/README.md --exclude=web/update.php --exclude=web/web.config --exclude=web/modules/README.txt --exclude=web/profiles/README.txt --exclude=web/themes/README.txt --exclude=web/sites/development.services.yml --exclude=web/sites/example.settings.local.php --exclude=web/sites/example.sites.php --exclude=web/sites/example.sites.php --exclude=web/sites/README.txt composer.json composer.lock vendor/ web/
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: release-${{ steps.sha.outputs.sha7 }}.tar.gz
-          path: ./release-${{ steps.sha.outputs.sha7 }}.tar.gz
+          dev: false
+          artifact: true
 
   deploy:
-    name: Deploy release
+    name: "Deploy release"
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: "Compute SHA"
-        id: sha
-        run: echo "::set-output name=sha7::$(echo ${GITHUB_SHA} | cut -c1-7)"
-
       - name: Download artifact
         uses: actions/download-artifact@v3
         with:
-          name: release-${{ steps.sha.outputs.sha7 }}.tar.gz
+          name: ${{ needs.build.outputs.filename }}
 
-      - name: Configure SSH
+      - name: "Configure SSH"
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/server.key
@@ -59,14 +47,14 @@ jobs:
           SSH_KEY: ${{ secrets.TEST_SSH_KEY }}
           SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
 
-      - name: Deploy release to server
+      - name: "Deploy release to server"
         run: |
-          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}'
-          scp release-${{ steps.sha.outputs.sha7 }}.tar.gz server:${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }}/
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/release-${{ steps.sha.outputs.sha7 }} && tar zxf release-${{ steps.sha.outputs.sha7 }}.tar.gz && rm release-${{ steps.sha.outputs.sha7 }}.tar.gz'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/settings.local.php'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./release-${{ steps.sha.outputs.sha7 }}/web/sites/default/files'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s release-${{ steps.sha.outputs.sha7 }} live'
+          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}'
+          scp ${{ needs.build.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}/
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && tar zxf ${{ needs.build.outputs.filename }} && rm ${{ needs.build.outputs.filename }}'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./${{ needs.build.outputs.base }}/web/sites/default/settings.local.php'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./${{ needs.build.outputs.base }}/web/sites/default/files'
+          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s ${{ needs.build.outputs.base }} live'
 
-      - name: Clean releases older than 90 days
+      - name: "Clean releases older than 90 days"
         run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
