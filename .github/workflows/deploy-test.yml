@@ -1,4 +1,8 @@
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'test'
+
 name: Deploy project to test instance
 jobs:
   build:
@@ -11,7 +15,7 @@ jobs:
     steps:
       - name: "Build artifact"
         id: release
-        uses: cristiroma/drupal-release-action@outputs
+        uses: cristiroma/drupal-release-action@v1.2
         with:
           dev: false
           artifact: true
