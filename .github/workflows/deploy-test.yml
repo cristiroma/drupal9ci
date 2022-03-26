@@ -1,7 +1,4 @@
-on:
-  push:
-    branches:
-      - 'test'
+on: [push, pull_request]
 name: Deploy project to test instance
 jobs:
   deploy:
