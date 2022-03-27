@@ -74,13 +74,10 @@ jobs:
           ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }} && rm -f live && ln -s ${{ needs.build.outputs.base }} live'
 
       - name: "Update instance"
-        run: |
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush state-set system.maintenance_mode TRUE'
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush cache:rebuild'
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush config-import -y'
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush updatedb -y'
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush cache:rebuild'
-          ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }}/live && ./vendor/bin/drush state-set system.maintenance_mode FALSE'
+        id: release
+        uses: cristiroma/drupal-update-action@v1
+        with:
+          path: ${{ secrets.PROD_PROJECT_DIR }}/live
 
       - name: "Clean releases older than 90 days"
         run:  ssh server 'cd ${{ secrets.PROD_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
