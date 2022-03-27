@@ -5,7 +5,14 @@
 - `TEST_SSH_USER` - SSH username
 - `TEST_SSH_KEY` - SSH private key. Generate one with: `ssh-keygen -t ed25519 -f server.key`
 - `TEST_SSH_HOST` - Server hostname or IP address
-- `TEST_PROJECT_DIR` - Base project dir. Here's an example layout
+- `TEST_PROJECT_DIR` - Base project dir. See below an example layout
+
+## deploy-prod.yml
+
+- `PROD_SSH_USER` - SSH username
+- `PROD_SSH_KEY` - SSH private key. Generate one with: `ssh-keygen -t ed25519 -f server.key`
+- `PROD_SSH_HOST` - Server hostname or IP address
+- `PROD_PROJECT_DIR` - Base project dir. Here's an example layout
 
 ```bash
  ./
