@@ -55,7 +55,7 @@ jobs:
 
       - name: "Update instance"
         id: release
-        uses: cristiroma/drupal-update-action@main
+        uses: cristiroma/drupal-update-action@v1
         with:
           path: ${{ secrets.TEST_PROJECT_DIR }}/live
 
