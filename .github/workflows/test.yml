@@ -10,6 +10,9 @@ jobs:
           dev: true
           artifact: false
 
+      - name: Check - PHP syntax
+        run: find . -name "*\.php" -type f -exec php -l {} \;
+
       - name: Check - PHP MD on modules
         run: ./vendor/bin/phpmd  ./web/modules/custom/ xml phpmd.xml
 

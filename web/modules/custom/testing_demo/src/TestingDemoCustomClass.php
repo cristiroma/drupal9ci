@@ -11,5 +11,5 @@ class TestingDemoCustomClass {
    * @var longVariableName
    */
   public $longVariableName = 0;
-
+ s
 }
