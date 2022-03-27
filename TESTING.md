@@ -1,5 +1,7 @@
 # Testing
 
+Note: You can use copy [example.phpunit.xml](example.phpunit.xml) from this repository or adapt the one shipped with Drupal core. `phpunit.xml` should not be committed into repository because it depends on local Drupal setup (URL).
+
 ## How to see which tests to run?
 
 1. List suites
