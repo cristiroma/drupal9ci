@@ -1,9 +1,18 @@
 on:
-  push:
-    branches:
-      - 'test'
+  workflow_dispatch:
+    inputs:
+      check_config:
+        type: boolean
+        description: 'Fail when configuration overridden'
+        required: true
+        default: true
+      sql_backup:
+        type: boolean
+        description: 'Create SQL backup'
+        required: true
+        default: true
 
-name: Deploy project to test instance
+name: Deploy to production
 jobs:
   build:
     name: "Create release archive"
@@ -47,7 +56,15 @@ jobs:
           SSH_KEY: ${{ secrets.TEST_SSH_KEY }}
           SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
 
-      - name: "Deploy release to the server"
+      - name: "Test for Drupal configuration changes"
+        if:  ${{ github.event.inputs.check_config == 'true' }}
+        run: ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && CONFIG_STATUS=$(./vendor/bin/drush config:status -n 2>&1) && echo ${CONFIG_STATUS} | grep -i -q -s "No differences"'
+
+      - name: "Doing SQL backup"
+        if:  ${{ github.event.inputs.sql_backup == 'true' }}
+        run: ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush sql:dump --structure-tables-list=cache,cache_*,watchdog,sessions,history --result-file=${{ secrets.TEST_PROJECT_DIR }}/database-before-${{ needs.build.outputs.base }}.sql --gzip'
+
+      - name: "Copy release to the server"
         run: |
           ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}'
           scp ${{ needs.build.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}/
