@@ -250,8 +250,8 @@ $databases = [];
  * @endcode
  */
 # $settings['hash_salt'] = '';
-if (file_exists($app_root . '/../hash_salt.txt')) {
-  $settings['hash_salt'] = file_get_contents($app_root . '/../hash_salt.txt');
+if (is_readable($app_root . '/../../hash-salt-default.txt')) {
+  $settings['hash_salt'] = file_get_contents($app_root . '/../../hash-salt-default.txt');
 }
 
 /**
