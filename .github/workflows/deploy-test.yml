@@ -1,24 +1,21 @@
-on:
-  push:
-    branches:
-      - 'test'
+on: push
 
 name: Deploy project to test instance
 jobs:
-  build:
-    name: "Create release archive"
-    runs-on: ubuntu-latest
-    outputs:
-      filename: ${{ steps.release.outputs.filename }}
-      base: ${{ steps.release.outputs.base }}
-      sha: ${{ steps.release.outputs.sha }}
-    steps:
-      - name: "Build artifact"
-        id: release
-        uses: cristiroma/drupal-release-action@v1.3
-        with:
-          dev: false
-          artifact: true
+#  build:
+#    name: "Create release archive"
+#    runs-on: ubuntu-latest
+#    outputs:
+#      filename: ${{ steps.release.outputs.filename }}
+#      base: ${{ steps.release.outputs.base }}
+#      sha: ${{ steps.release.outputs.sha }}
+#    steps:
+#      - name: "Build artifact"
+#        id: release
+#        uses: cristiroma/drupal-release-action@v1.3
+#        with:
+#          dev: false
+#          artifact: true
 
   deploy:
     name: "Deploy release"
@@ -47,23 +44,20 @@ jobs:
           SSH_KEY: ${{ secrets.TEST_SSH_KEY }}
           SSH_HOST: ${{ secrets.TEST_SSH_HOST }}
 
-      - name: "Deploy release to the server"
-        run: |
-          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}'
-          scp ${{ needs.build.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}/
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && tar zxf ${{ needs.build.outputs.filename }} && rm ${{ needs.build.outputs.filename }}'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./${{ needs.build.outputs.base }}/web/sites/default/settings.local.php'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./${{ needs.build.outputs.base }}/web/sites/default/files'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s ${{ needs.build.outputs.base }} live'
+#      - name: "Deploy release to the server"
+#        run: |
+#          ssh server 'rm -rf ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && mkdir -p ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}'
+#          scp ${{ needs.build.outputs.filename }} server:${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }}/
+#          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/${{ needs.build.outputs.base }} && tar zxf ${{ needs.build.outputs.filename }} && rm ${{ needs.build.outputs.filename }}'
+#          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/settings.local.php ./${{ needs.build.outputs.base }}/web/sites/default/settings.local.php'
+#          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && ln -s ${{ secrets.TEST_PROJECT_DIR }}/files ./${{ needs.build.outputs.base }}/web/sites/default/files'
+#          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && rm -f live && ln -s ${{ needs.build.outputs.base }} live'
 
       - name: "Update instance"
-        run: |
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush state-set system.maintenance_mode TRUE'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush cache:rebuild'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush config-import -y'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush updatedb -y'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush cache:rebuild'
-          ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }}/live && ./vendor/bin/drush state-set system.maintenance_mode FALSE'
+        id: release
+        uses: cristiroma/drupal-update-action@main
+        with:
+          path: ${{ secrets.TEST_PROJECT_DIR }}
 
-      - name: "Clean releases older than 90 days"
-        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
+#      - name: "Clean releases older than 90 days"
+#        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
