@@ -1,6 +1,6 @@
 on: push
 
-name: Deploy project to test instance
+name: Deploy to test instance
 jobs:
 #  build:
 #    name: "Create release archive"
@@ -57,7 +57,7 @@ jobs:
         id: release
         uses: cristiroma/drupal-update-action@main
         with:
-          path: ${{ secrets.TEST_PROJECT_DIR }}
+          path: ${{ secrets.TEST_PROJECT_DIR }}/live
 
 #      - name: "Clean releases older than 90 days"
 #        run:  ssh server 'cd ${{ secrets.TEST_PROJECT_DIR }} && find release-* -maxdepth 1 -type d -mtime +90 -prune -exec rm -rf {} \;'
