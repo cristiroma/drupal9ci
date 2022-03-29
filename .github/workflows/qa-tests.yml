@@ -4,7 +4,6 @@ jobs:
   qa-tests:
     name: "Run Drupal tests"
     runs-on: ubuntu-latest
-    needs: code
     services:
       mariadb:
         image: mariadb:latest
