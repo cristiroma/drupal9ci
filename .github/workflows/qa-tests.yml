@@ -1,12 +1,8 @@
-####
-# 1. Configure below the triggers when the checks are running
-####
-
 on: [push, pull_request]
-name: 'Drupal instance testing'
+name: "Run project tests"
 jobs:
   qa-tests:
-    name: 'Execute Drupal tests'
+    name: "Run Drupal tests"
     runs-on: ubuntu-latest
     services:
       mariadb:
@@ -19,13 +15,11 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-
-      - uses: eaudeweb/drupal-install-action@main
+      - uses: cristiroma/drupal-release-action@v1.3
         with:
           dev: true
+          artifact: false
+      - uses: nanasess/setup-chromedriver@v1
 
       - name: Execute unit tests
         run: ./vendor/bin/phpunit --testsuite=unit
@@ -42,4 +36,4 @@ jobs:
           export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-
+          ./vendor/bin/phpunit --testsuite=functionaljs
