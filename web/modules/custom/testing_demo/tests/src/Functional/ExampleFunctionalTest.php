@@ -30,8 +30,8 @@ class ExampleFunctionalTest extends BrowserTestBase {
    */
   public function testIPAddressValidation() {
     // Create user.
-    $admin_user = $this->drupalCreateUser(['ban IP addresses']);
-    $this->drupalLogin($admin_user);
+    $adminUser = $this->drupalCreateUser(['ban IP addresses']);
+    $this->drupalLogin($adminUser);
     $this->drupalGet('admin/config/people/ban');
     $connection = Database::getConnection();
 
@@ -73,12 +73,12 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Enter a valid IP address.');
 
     // Pass an IP address as a URL parameter and submit it.
-    $submit_ip = '1.2.3.4';
-    $this->drupalGet('admin/config/people/ban/' . $submit_ip);
+    $submitIp = '1.2.3.4';
+    $this->drupalGet('admin/config/people/ban/' . $submitIp);
     $this->submitForm([], 'Add');
-    $ip = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $submit_ip)->execute()->fetchField();
+    $ip = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $submitIp)->execute()->fetchField();
     $this->assertNotEmpty($ip, 'IP address found in database');
-    $this->assertSession()->pageTextContains("The IP address $submit_ip has been banned.");
+    $this->assertSession()->pageTextContains("The IP address $submitIp has been banned.");
 
     // Submit your own IP address. This fails, although it works when testing
     // manually.
@@ -99,16 +99,16 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $query = $connection->select('ban_ip', 'bip');
     $query->fields('bip', ['iid']);
     $query->condition('bip.ip', $ip);
-    $ip_count = $query->execute()->fetchAll();
-    $this->assertCount(1, $ip_count);
+    $ipCount = $query->execute()->fetchAll();
+    $this->assertCount(1, $ipCount);
     $ip = '';
     $banIp->banIp($ip);
     $banIp->banIp($ip);
     $query = $connection->select('ban_ip', 'bip');
     $query->fields('bip', ['iid']);
     $query->condition('bip.ip', $ip);
-    $ip_count = $query->execute()->fetchAll();
-    $this->assertCount(1, $ip_count);
+    $ipCount = $query->execute()->fetchAll();
+    $this->assertCount(1, $ipCount);
   }
 
 }

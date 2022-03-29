@@ -25,25 +25,25 @@ class ExampleFunctionalJavascriptTest extends WebDriverTestBase {
    * Tests if the dialog UI works properly with block layout page.
    */
   public function testDialogOpenAndClose() {
-    $admin_user = $this->drupalCreateUser(['administer blocks']);
-    $this->drupalLogin($admin_user);
+    $adminUser = $this->drupalCreateUser(['administer blocks']);
+    $this->drupalLogin($adminUser);
     $this->drupalGet('admin/structure/block');
     $session = $this->getSession();
-    $assert_session = $this->assertSession();
+    $assertSession = $this->assertSession();
     $page = $session->getPage();
 
     // Open the dialog using the place block link.
     $placeBlockLink = $page->findLink('Place block');
     $this->assertTrue($placeBlockLink->isVisible(), 'Place block button exists.');
     $placeBlockLink->click();
-    $assert_session->assertWaitOnAjaxRequest();
+    $assertSession->assertWaitOnAjaxRequest();
     $dialog = $page->find('css', '.ui-dialog');
     $this->assertTrue($dialog->isVisible(), 'Dialog is opened after clicking the Place block button.');
 
     // Close the dialog again.
     $closeButton = $page->find('css', '.ui-dialog-titlebar-close');
     $closeButton->click();
-    $assert_session->assertWaitOnAjaxRequest();
+    $assertSession->assertWaitOnAjaxRequest();
     $dialog = $page->find('css', '.ui-dialog');
     $this->assertNull($dialog, 'Dialog is closed after clicking the close button.');
 
@@ -51,7 +51,7 @@ class ExampleFunctionalJavascriptTest extends WebDriverTestBase {
     // finish as no Javascript errors should have been triggered. If there were
     // javascript errors the test will fail on that.
     $session->resizeWindow(625, 625);
-    $assert_session->assertWaitOnAjaxRequest();
+    $assertSession->assertWaitOnAjaxRequest();
   }
 
 }
