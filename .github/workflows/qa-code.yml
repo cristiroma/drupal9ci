@@ -5,9 +5,12 @@ jobs:
     name: "Check code quality"
     runs-on: ubuntu-latest
     steps:
-      - uses: cristiroma/drupal-release-action@v1.3
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - uses: cristiroma/drupal-install-action@main
         with:
           dev: true
-          artifact: false
 
       - uses: cristiroma/drupal-code-qa-action@main
