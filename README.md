@@ -1,149 +1,36 @@
-# Local development
+# How to use this repository
 
-## Installing site from config without SQL dump
+This repository is meant as a demo for CI/CD workflows and should not be used by cloning it. Here are few scenarios:
 
-You can install the website without using an existing SQL dump using the following steps:
+## Quality assurance
 
-1. Create a new file `web/sites/default/settings.local.php` populated with the database connection information
+Copy [.github/workflows/test.yml](.github/workflows/test.yml) file to your repository, define the event to run (push, pull-request etc.). This will run Drupal related quality checks including running the project's tests.
 
-```php
-  $databases['default']['default'] = array (
-    'database' => 'drupal',
-    'username' => 'root',
-    'password' => 'root',
-    'prefix' => '',
-    'host' => 'localhost',
-    'port' => '',
-    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-    'driver' => 'mysql',
-);
-
-```
-
-2. Install the website using Drush
-
+The container is a wrapper around typical tools and you can also run these checks locally using the following commands:
 
 ```bash
-./vendor/bin/drush site:install --existing-config -y
+composer require --dev drupal/coder drupal/core-dev overtrue/phplint phpspec/prophecy-phpunit
+
+./vendor/bin/phplint --no-cache --no-progress --extensions=php,module,inc,install,test,theme, ./web/themes/custom/ ./web/modules/custom/
+./vendor/bin/phpmd  ./web/modules/custom/ xml phpmd.xml
+./vendor/bin/phpmd  ./web/themes/custom/ xml phpmd.xml
+./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml ./web/modules/custom/ ./web/themes/custom/
 ```
 
-
-# Quality assurance
-
-
-## PHPCS - PHP Code Sniffer
-
-
-1. Use the PHP CS locally:
-
-
-```bash
-./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,test,profile,theme,css,info,txt,md,yml web/modules/custom/ web/themes/custom/
-```
-
+1. See [phpmd.xml](phpmd.xml) in this repository.
 2. Automatically fix coding issues
 
 ```bash
 ./vendor/bin/phpcbf --standard=Drupal,DrupalPractice web/modules/custom/ web/themes/custom/
 ```
 
-Bibliography:
+## Deployments
+
+Use [.github/workflows/deploy-test.yml](.github/workflows/deploy-test.yml) and [.github/workflows/deploy-prod.yml](.github/workflows/deploy-prod.yml) to enable deployments in your project.
+
+
+## Bibliography
 
 - https://www.drupal.org/docs/contributed-modules/code-review-module/installing-coder-sniffer
 - https://www.drupal.org/docs/contributed-modules/code-review-module/php-codesniffer-command-line-usage
 - https://www.drupal.org/drupalorg/docs/drupal-ci/using-coderphpcs-in-drupalci
-
-
-
-# Testing
-
-## How to see which tests to run?
-
-1. List suites
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/ --list-suites
-
-Available test suite(s):
- - unit
- - kernel
- - functional
- - nonfunctional
-```
-
-2. List groups
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/ --list-groups
-Available test group(s):
- - pathauto
-```
-
-
-## How to run tests?
-
-All tests below assume there's an `phpunit.xml` file in the project directory. You can copy `example.phpunit.xml` (derived from Drupal's core provided file) to `phpunit.xml`.
-
-Bibliography:
-
-- https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/running-phpunit-tests
-
-
-1. Run a specific suite
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/ --testsuite=unit
-
-
-PHPUnit 9.5.19 #StandWithUkraine
-.................SSSSS..........................                  48 / 48 (100%)
-
-Time: 02:13.893, Memory: 18.00 MB
-```
-
-2. Run a specific test group
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/ --group=pathauto
-
-.................SSSSS..........................                  48 / 48 (100%)
-
-Time: 02:13.211, Memory: 16.00 MB
-```
-
-3. Run all tests from a specific module
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/
-
-Testing /home/cristiroma/Work/drupal9ci/web/modules/contrib/pathauto
-.................SSSSS..........................                  48 / 48 (100%)
-
-Time: 02:13.968, Memory: 18.00 MB
-```
-
-4. Run a specific test class
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/tests/src/Unit/VerboseMessengerTest.php
-
-Testing Drupal\Tests\pathauto\Unit\VerboseMessengerTest
-..                                                                  2 / 2 (100%)
-
-Time: 00:00.019, Memory: 10.00 MB
-
-OK (2 tests, 4 assertions)
-```
-
-5. Run a specific test from class
-
-```bash
-./vendor/bin/phpunit web/modules/contrib/pathauto/tests/src/Unit/VerboseMessengerTest.php --filter=testAddMessage
-
-Testing Drupal\Tests\pathauto\Unit\VerboseMessengerTest
-.                                                                   1 / 1 (100%)
-
-Time: 00:00.020, Memory: 12.00 MB
-
-OK (1 test, 2 assertions)
-```
