@@ -1,8 +1,8 @@
 on: [push, pull_request]
-name: Tests and code
+name: 'Drupal instance testing'
 jobs:
   qa-tests:
-    name: "Run Drupal tests"
+    name: 'Execute Drupal tests'
     runs-on: ubuntu-latest
     services:
       mariadb:
@@ -15,12 +15,15 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: cristiroma/drupal-release-action@v1.3
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - uses: cristiroma/drupal-install-action@main
         with:
           dev: true
-          artifact: false
 
-      - name: Execute tests
+      - name: 'Execute tests'
         run: |
           cp example.phpunit.xml phpunit.xml
           ./vendor/bin/phpunit web/modules/custom
