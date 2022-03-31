@@ -19,7 +19,7 @@ jobs:
       - uses: cristiroma/drupal-install-action@main
         with:
           dev: false
-      - uses: cristiroma/drupal-release-action@main
+      - uses: cristiroma/drupal-artifact-action@main
 
   deploy:
     name: 'Deploy on test server'
