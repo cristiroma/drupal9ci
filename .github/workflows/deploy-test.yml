@@ -9,9 +9,9 @@ jobs:
     name: 'Build artifact'
     runs-on: ubuntu-latest
     outputs:
-      filename: ${{ steps.release.outputs.filename }}
-      base: ${{ steps.release.outputs.base }}
-      sha: ${{ steps.release.outputs.sha }}
+      filename: ${{ steps.artifact.outputs.filename }}
+      base: ${{ steps.artifact.outputs.base }}
+      sha: ${{ steps.artifact.outputs.sha }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -19,7 +19,8 @@ jobs:
       - uses: cristiroma/drupal-install-action@main
         with:
           dev: false
-      - uses: cristiroma/drupal-artifact-action@main
+      - id: artifact
+        uses: cristiroma/drupal-artifact-action@main
 
   deploy:
     name: 'Deploy on test server'
