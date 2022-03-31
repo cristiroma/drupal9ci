@@ -10,14 +10,4 @@ jobs:
           dev: true
           artifact: false
 
-      - name: Check - PHP syntax
-        run: ./vendor/bin/phplint --no-cache --no-progress --extensions=php,module,inc,install,test,theme, ./web/themes/custom/ ./web/modules/custom/
-
-      - name: Check - PHP MD on modules
-        run: ./vendor/bin/phpmd  ./web/modules/custom/ xml phpmd.xml
-
-      - name: Check - PHP MD on theme
-        run: ./vendor/bin/phpmd  ./web/themes/custom/ xml phpmd.xml
-
-      - name: Check - PHP Code Sniffer
-        run: ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,profile,theme,test,css,info,txt,md,yml ./web/modules/custom/ ./web/themes/custom/
+      - uses: cristiroma/drupal-code-qa-action@main
