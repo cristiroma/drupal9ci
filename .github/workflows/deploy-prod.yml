@@ -25,11 +25,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - uses: cristiroma/drupal-install-action@main
+      - uses: eaudeweb/drupal-install-action@main
         with:
           dev: false
       - id: artifact
-        uses: cristiroma/drupal-artifact-action@main
+        uses: eaudeweb/drupal-artifact-action@main
 
   deploy:
     name: 'Deploy release'
@@ -77,7 +77,7 @@ jobs:
 
       - name: 'Update Drupal instance'
         id: release
-        uses: cristiroma/drupal-update-action@v1
+        uses: eaudeweb/drupal-update-action@v1
         with:
           path: ${{ secrets.PROD_PROJECT_DIR }}/live
 

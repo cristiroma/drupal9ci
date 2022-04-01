@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - uses: cristiroma/drupal-install-action@main
+      - uses: eaudeweb/drupal-install-action@main
         with:
           dev: true
 
