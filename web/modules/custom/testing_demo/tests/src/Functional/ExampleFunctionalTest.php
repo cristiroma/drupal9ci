@@ -33,7 +33,7 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $adminUser = $this->drupalCreateUser(['ban IP addresses']);
     $this->drupalLogin($adminUser);
     $this->drupalGet('admin/config/people/ban');
-    $connection = Database::getConnection();
+    $connection = \Drupal::service('database');
 
     // Ban a valid IP address.
     $edit = [];
