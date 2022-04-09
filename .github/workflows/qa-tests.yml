@@ -15,10 +15,14 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - uses: cristiroma/drupal-release-action@v1.3
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - uses: eaudeweb/drupal-install-action@main
         with:
           dev: true
-          artifact: false
+
       - uses: nanasess/setup-chromedriver@v1
 
       - name: Execute unit tests
