@@ -40,8 +40,8 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $edit['ip'] = '1.2.3.3';
     $this->drupalGet('admin/config/people/ban');
     $this->submitForm($edit, 'Add');
-    $ip_address = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $edit['ip'])->execute()->fetchField();
-    $this->assertNotEmpty($ip_address, 'IP address found in database.');
+    $ipAddress = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $edit['ip'])->execute()->fetchField();
+    $this->assertNotEmpty($ipAddress, 'IP address found in database.');
     $this->assertSession()->pageTextContains('The IP address 1.2.3.3 has been banned.');
 
     // Try to block an IP address that's already blocked.
@@ -76,8 +76,8 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $submitIp = '1.2.3.4';
     $this->drupalGet('admin/config/people/ban/' . $submitIp);
     $this->submitForm([], 'Add');
-    $ip_address = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $submitIp)->execute()->fetchField();
-    $this->assertNotEmpty($ip_address, 'IP address found in database');
+    $ipAddress = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $submitIp)->execute()->fetchField();
+    $this->assertNotEmpty($ipAddress, 'IP address found in database');
     $this->assertSession()->pageTextContains("The IP address $submitIp has been banned.");
 
     // Submit your own IP address. This fails, although it works when testing
@@ -92,21 +92,21 @@ class ExampleFunctionalTest extends BrowserTestBase {
     // Test duplicate ip address are not present in the 'blocked_ips' table.
     // when they are entered programmatically.
     $banIp = new BanIpManager($connection);
-    $ip_address = '1.0.0.0';
-    $banIp->banIp($ip_address);
-    $banIp->banIp($ip_address);
-    $banIp->banIp($ip_address);
+    $ipAddress = '1.0.0.0';
+    $banIp->banIp($ipAddress);
+    $banIp->banIp($ipAddress);
+    $banIp->banIp($ipAddress);
     $query = $connection->select('ban_ip', 'bip');
     $query->fields('bip', ['iid']);
-    $query->condition('bip.ip', $ip_address);
+    $query->condition('bip.ip', $ipAddress);
     $ipCount = $query->execute()->fetchAll();
     $this->assertCount(1, $ipCount);
-    $ip_address = '';
-    $banIp->banIp($ip_address);
-    $banIp->banIp($ip_address);
+    $ipAddress = '';
+    $banIp->banIp($ipAddress);
+    $banIp->banIp($ipAddress);
     $query = $connection->select('ban_ip', 'bip');
     $query->fields('bip', ['iid']);
-    $query->condition('bip.ip', $ip_address);
+    $query->condition('bip.ip', $ipAddress);
     $ipCount = $query->execute()->fetchAll();
     $this->assertCount(1, $ipCount);
   }
