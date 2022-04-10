@@ -29,15 +29,14 @@ jobs:
       - name: 'Execute Kernel tests'
         run: ./vendor/bin/phpunit --testsuite=kernel
 
-      - name: 'Setup chromedriver'
-        uses: nanasess/setup-chromedriver@v1
-#        with:
-#          # Optional: do not specify to match Chrome's version
-#          chromedriver-version: '88.0.4324.96'
-
-      - name: 'Execute Functional JavaScript tests'
+      - name: 'Start chromedriver'
         run: |
           export DISPLAY=:99
-          chromedriver --verbose &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-          ./vendor/bin/phpunit --testsuite=functionaljs
+          sudo xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+          /usr/local/share/chrome_driver &
+
+      - name: 'Execute Functional tests'
+        run: ./vendor/bin/phpunit --testsuite=functional
+
+      - name: 'Execute Functional JavaScript tests'
+        run: ./vendor/bin/phpunit --testsuite=functionaljs
