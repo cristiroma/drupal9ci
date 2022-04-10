@@ -27,6 +27,7 @@ class ExampleFunctionalTest extends BrowserTestBase {
 
   /**
    * Tests various user input to confirm correct validation and saving of data.
+   * @SuppressWarnings(PHPMD.StaticAccess)
    */
   public function testIPAddressValidation() {
     // Create user.
