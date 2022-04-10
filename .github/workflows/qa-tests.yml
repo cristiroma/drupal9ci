@@ -32,7 +32,7 @@ jobs:
       - name: 'Setup web server'
         run: |
           cp .github/workflows/settings.local.php web/sites/default/
-          ./vendor/bin/drush cim -y --existing-config
+          ./vendor/bin/drush site:install -y --existing-config
           sudo ./vendor/bin/drush runserver 80 &
 
       - name: 'Start chromedriver'
