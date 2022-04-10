@@ -3,7 +3,6 @@
 namespace Drupal\Tests\testing_demo\Functional;
 
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Core\Database\Database;
 use Drupal\ban\BanIpManager;
 
 /**
@@ -27,9 +26,10 @@ class ExampleFunctionalTest extends BrowserTestBase {
 
   /**
    * Tests various user input to confirm correct validation and saving of data.
+   *
    * @SuppressWarnings(PHPMD.StaticAccess)
    */
-  public function testIPAddressValidation() {
+  public function testIpAddressValidation() {
     // Create user.
     $adminUser = $this->drupalCreateUser(['ban IP addresses']);
     $this->drupalLogin($adminUser);
@@ -80,15 +80,6 @@ class ExampleFunctionalTest extends BrowserTestBase {
     $ipAddress = $connection->select('ban_ip', 'bi')->fields('bi', ['iid'])->condition('ip', $submitIp)->execute()->fetchField();
     $this->assertNotEmpty($ipAddress, 'IP address found in database');
     $this->assertSession()->pageTextContains("The IP address $submitIp has been banned.");
-
-    // Submit your own IP address. This fails, although it works when testing
-    // manually.
-    // TODO: On some systems this test fails due to a bug/inconsistency in cURL.
-    // $edit = array();
-    // $edit['ip'] = \Drupal::request()->getClientIP();
-    // $this->drupalGet('admin/config/people/ban');
-    // $this->submitForm($edit, 'Save');
-    // $this->assertSession()->pageTextContains('You may not ban your own IP address.');
 
     // Test duplicate ip address are not present in the 'blocked_ips' table.
     // when they are entered programmatically.
