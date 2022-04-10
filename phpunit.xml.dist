@@ -40,20 +40,21 @@
     <!-- Example for changing the driver args to mink tests MINK_DRIVER_ARGS value: '["http://127.0.0.1:8510"]' -->
     <!-- Example for changing the driver args to phantomjs tests MINK_DRIVER_ARGS_PHANTOMJS value: '["http://127.0.0.1:8510"]' -->
     <!-- Example for changing the driver args to webdriver tests MINK_DRIVER_ARGS_WEBDRIVER value: '["firefox", null, "http://localhost:4444/wd/hub"]' -->
+    <env name="MINK_DRIVER_ARGS" value='["http://localhost"]' />
+    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", { "browserName":"chrome", "chromeOptions": { "args" : [ "--disable-gpu", "--headless", "--no-sandbox", "--disable-dev-shm-usage" ] } }, "http://localhost:9515" ]' />
   </php>
   <testsuites>
     <testsuite name="unit">
-      <file>./tests/TestSuites/UnitTestSuite.php</file>
+      <directory>./web/modules/custom/*/**/src/Unit</directory>
     </testsuite>
     <testsuite name="kernel">
-      <file>./tests/TestSuites/KernelTestSuite.php</file>
+      <directory>./web/modules/custom/*/**/src/Kernel</directory>
     </testsuite>
     <testsuite name="functional">
-      <file>./tests/TestSuites/FunctionalTestSuite.php</file>
+      <directory>./web/modules/custom/*/**/src/Functional</directory>
     </testsuite>
-    <testsuite name="nonfunctional">
-      <file>./tests/TestSuites/UnitTestSuite.php</file>
-      <file>./tests/TestSuites/KernelTestSuite.php</file>
+      <testsuite name="functionaljs">
+      <directory>./web/modules/custom/*/**/src/FunctionalJavascript</directory>
     </testsuite>
   </testsuites>
   <listeners>
