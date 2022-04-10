@@ -4,16 +4,6 @@ jobs:
   qa-tests:
     name: "Run Drupal tests"
     runs-on: ubuntu-latest
-    services:
-      mariadb:
-        image: mariadb:latest
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: drupal
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -22,6 +12,9 @@ jobs:
       - uses: eaudeweb/drupal-install-action@main
         with:
           dev: true
+
+      - name: 'Start MySQL'
+        run: sudo systemctl start mysql
 
       - name: 'Execute Unit tests'
         run: ./vendor/bin/phpunit --testsuite=unit
