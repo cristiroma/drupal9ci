@@ -13,29 +13,5 @@ jobs:
         with:
           dev: true
 
-      - name: 'Start MySQL'
-        run: sudo systemctl start mysql
-
-      - name: 'Execute Unit tests'
-        run: ./vendor/bin/phpunit --testsuite=unit
-
-      - name: 'Execute Kernel tests'
-        run: ./vendor/bin/phpunit --testsuite=kernel
-
-      - name: 'Setup web server'
-        run: |
-          cp .github/workflows/settings.local.php web/sites/default/
-          ./vendor/bin/drush site:install -y --existing-config
-          sudo ./vendor/bin/drush runserver 80 &
-
-      - name: 'Start chromedriver'
-        run: |
-          export DISPLAY=:99
-          sudo xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-          /usr/local/share/chrome_driver/chromedriver &
-
-      - name: 'Execute Functional tests'
-        run: ./vendor/bin/phpunit --testsuite=functional
-
-      - name: 'Execute Functional JavaScript tests'
-        run: ./vendor/bin/phpunit --testsuite=functionaljs
+      - name: 'Run Drupal tests'
+        uses: eaudeweb/drupal-runtests-action@main
