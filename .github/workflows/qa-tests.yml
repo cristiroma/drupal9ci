@@ -29,11 +29,16 @@ jobs:
       - name: 'Execute Kernel tests'
         run: ./vendor/bin/phpunit --testsuite=kernel
 
+      - name: 'Start web server'
+        run: |
+          pwd
+          service apache2 restart
+
       - name: 'Start chromedriver'
         run: |
           export DISPLAY=:99
           sudo xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-          /usr/local/share/chrome_driver &
+          /usr/local/share/chrome_driver/chromedriver &
           sudo ./vendor/bin/drush runserver 80 &
 
       - name: 'Execute Functional tests'
